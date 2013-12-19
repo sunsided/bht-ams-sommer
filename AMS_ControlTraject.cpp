@@ -110,22 +110,23 @@ int main(int argc, char **argv)
         ay_s = (vy_s - vy_s1) * invT;
 
         // Aktuelle Fehler ermitteln
-        e_x  = x_s - x;
-        e_y  = y_s - y;
-        e_vx = vx_s - vx;
-        e_vy = vy_s - vy;
+        const double enable = 1;
+        e_x  = enable * (x_s - x);
+        e_y  = enable * (y_s - y);
+        e_vx = enable * (vx_s - vx);
+        e_vy = enable * (vy_s - vy);
 
-        cout << "e_x: " << e_x << " e_y: " << e_y << " e_vx: " << e_vx << " e_vy: " << e_vy << endl;
+//        cout << "e_x: " << e_x << " e_y: " << e_y << " e_vx: " << e_vx << " e_vy: " << e_vy << endl;
 
         // Bestimmung und Setzen der Sollgeschwindigkeiten (Stellgrößen)
-        const double ax_s = (vx_s - vx) * invT;
-        const double ay_s = (vy_s - vy) * invT;
+        const double ax_s = (vx_s - vx_s1) * invT;
+        const double ay_s = (vy_s - vy_s1) * invT;
         ax = ax_s + kI * e_vx + kII * e_x;
         ay = ay_s + kI * e_vy + kII * e_y;
         a1 = ax *  cost + ay * sint;
         a2 = ax * -sint + ay * cost;
-        v_s = v + a1 * T;
-        w_s = a2 / v_s;
+        v_s += a1 * T;
+        w_s  = a2 / v_s;
 
         /******************** Ende des zusätzlich eingefügten Quellcodes ********************/
 
