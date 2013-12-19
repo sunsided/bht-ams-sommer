@@ -30,7 +30,7 @@
 			<Add library="/usr/lib64/libncurses.so" />
 			<Add library="/usr/lib64/libnewmat.so" />
 		</Linker>
-		<Unit filename="main.cpp" />
+		<Unit filename="AMS_ControlTraject.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
