@@ -1,7 +1,7 @@
 /// Beuth Hochschule für Technik Berlin
 /// Autonome Mobile Systeme
 /// Prof. Dr.-Ing. Volker Sommer
-/// Bearbeitet von: Markus
+/// Bearbeitet von: Markus Mayer
 
 #include "AMS_Robot.hpp"
 #include "boost/date_time/posix_time/posix_time.hpp"
