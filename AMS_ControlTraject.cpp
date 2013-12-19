@@ -106,8 +106,8 @@ int main(int argc, char **argv)
         // Soll-Geschwindigkeiten und -Beschleunigungen für aktuellen Schritt bestimmen
         vx_s = (x_s - x_s1) * invT;
         vy_s = (y_s - y_s1) * invT;
-        ax_s = (vx - vx_s1) * invT;
-        ay_s = (vy - vy_s1) * invT;
+        ax_s = (vx_s - vx_s1) * invT;
+        ay_s = (vy_s - vy_s1) * invT;
 
         // Aktuelle Fehler ermitteln
         e_x  = x_s - x;
@@ -115,11 +115,13 @@ int main(int argc, char **argv)
         e_vx = vx_s - vx;
         e_vy = vy_s - vy;
 
-        cout << "ex: " << e_x << " e_y: " << e_y << " e_vx: " << e_vx << " e_vy: " << e_vy << endl;
+        cout << "e_x: " << e_x << " e_y: " << e_y << " e_vx: " << e_vx << " e_vy: " << e_vy << endl;
 
         // Bestimmung und Setzen der Sollgeschwindigkeiten (Stellgrößen)
-        ax = (vx_s - vx) * invT;
-        ay = (vy_s - vy) * invT;
+        const double ax_s = (vx_s - vx) * invT;
+        const double ay_s = (vy_s - vy) * invT;
+        ax = ax_s + kI * e_vx + kII * e_x;
+        ay = ay_s + kI * e_vy + kII * e_y;
         a1 = ax *  cost + ay * sint;
         a2 = ax * -sint + ay * cost;
         v_s = v + a1 * T;

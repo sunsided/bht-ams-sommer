@@ -1,9 +1,11 @@
 # depslib dependency file v1.0
-1387451301 source:/home/campus/s52959/ams-Sommer/AMS_ControlTraject.cpp
+1387456223 source:/home/campus/s52959/ams-Sommer/AMS_ControlTraject.cpp
 	"AMS_Robot.hpp"
 	"boost/date_time/posix_time/posix_time.hpp"
 	<fstream>
 	<cmath>
+	<iostream>
+	<iomanip>
 
 1386260657 /home/campus/s52959/ams-Sommer/AMS_Robot.hpp
 	<string>
