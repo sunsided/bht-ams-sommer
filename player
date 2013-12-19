@@ -1,0 +1,2 @@
+#!/bin/sh
+player AMS_config/AMS.cfg
