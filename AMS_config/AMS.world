@@ -1,0 +1,159 @@
+# AMS-Konfigurationsdatei eines Roboters mit Lasersensor für 
+# den Simulator Stage
+# Author: Prof. Dr.-Ing. Volker Sommer
+
+window	# Fenster zur Darstellung der Simulation
+(
+  size [ 620 650 ] # Fenstergröße in Pixel
+  scale 60.000  # Skalierung des Fensters in Pixel/m, hier: 600/10
+  center [ 0.000 0.000 ]
+  rotate [ 0.000 0.000 ]
+  show_data 1
+  show_flags 1
+  show_blocks 1
+  show_clock 0
+  show_footprints 0
+  show_grid 1
+  show_trailarrows 0
+  show_trailrise 0
+  show_trailfast 0
+  show_occupancy 0
+  pcam_on 0
+  screenshots 0
+)
+
+#################### Erzeugung der Karte ####################
+
+define Karte model  # Definition von Kartenparametern
+(
+  # allgemeine Simulationsparameter
+  color "blue"		# Farbe der Konturen
+  boundary 0		# Umrandung
+  gui_nose 0		# Anzeige der Ausrichtung
+  gui_grid 0		# Überlagerung eines Rasters
+  gui_move 0		# Verschiebbarkeit
+  gui_outline 1		# Umrandung
+
+  # Simulierte Reaktion auf Sensoren
+  gripper_return 0	# floorplan nicht greifbar
+  fiducial_return 0	# keine Sichtbarkeit durch fiducial-Sensor
+  ranger_return 1.000	# Sichtbarkeit von floorplan durch ranger-Sensor (0..1)
+  obstacle_return 1	# Stopp bei Kontakt
+)
+
+Karte 		# Instanzierung der Karte
+(
+  name "AMS"				# Name der Karte
+  size [ 10.000 10.000 1.500 ]    	# Dimensionen (x,y,z) in m
+  bitmap "AMS.png"  			# Binärdatei mit Hinderniskonturen
+)
+
+#################### Erzeugung des Roboters ####################
+
+define Lasersensor ranger # Definition des Lasersensors
+(
+  sensor
+  (
+    range [0 1.2]
+    fov 360
+    samples 360
+  )
+  size [ 0.100 0.100 0.100 ] 	# Größe des Sensors
+  color "yellow"	# Farbe des Sensors
+  block  		# Kontur des Sensors
+  ( 
+    points 4
+    point[0] [0 0]
+    point[1] [0 1]
+    point[2] [1 1]
+    point[3] [1 0]
+    z [0 0.1]		# Höhe [ zmin zmax ]
+  )
+)
+
+define Roboter position	# Festlegung der Roboterkontur
+(
+  size [0.600 0.600 1.000] 	# Größe des Roboters
+  color "red"	# Farbe
+  block  		# Umrandung des Roboters
+  (
+    points 16
+    point[0] [ 0.225 0.000 ]
+    point[1] [ 0.208 0.086 ]
+    point[2] [ 0.159 0.159 ]
+    point[3] [ 0.086 0.208 ]
+    point[4] [ 0.000 0.225 ]
+    point[5] [ -0.086 0.208 ]
+    point[6] [ -0.159 0.159 ]
+    point[7] [ -0.208 0.086 ]
+    point[8] [ -0.225 0.000 ]
+    point[9] [ -0.208 -0.086 ]
+    point[10] [ -0.159 -0.159 ]
+    point[11] [ -0.086 -0.208 ]
+    point[12] [ -0.000 -0.225 ]
+    point[13] [ 0.086 -0.208 ]
+    point[14] [ 0.159 -0.159 ]
+    point[15] [ 0.208 -0.086 ]
+    z [0 0.45]  	# Höhe
+  )
+)
+
+define Rad position	# Festlegung der Radkonturen
+(
+  size [0.300 0.080 0.300] 	# Größe
+  color "black"	     	# Farbe
+  block  		# Kontur
+  (
+    points 4
+    point[0] [  1  1 ]
+    point[1] [ -1  1 ]
+    point[2] [ -1  0 ]
+    point[3] [  1  0 ]
+    z [0 0.3 ]		# Höhe
+  )
+)
+
+define Stuetzrad position # Festlegung der Stützradkontur
+(
+  size [0.100 0.080 0.100] 	# Größe
+  color "black"	     	# Farbe
+  block  		# Kontur
+  (
+    points 4
+    point[0] [  1  1 ]
+    point[1] [ -1  1 ]
+    point[2] [ -1  0 ]
+    point[3] [  1  0 ]
+    z [0 0.1 ]		# Höhe
+  )
+)
+
+Roboter  # Instanzierung des Roboters
+(
+  name "r0"			# Name des Robotermodells
+  pose [ -2.000 1.000 0.000 0.000 ]    		# Roboterstartposition in der Karte (x/m y/m z/m phi/°)
+
+  origin [0.000 0.000 0.000 0.000] 	# Drehpunkt vom Mittelpunkt aus
+  gui_move 1			# Verschiebbarkeit durch Maus im Simulationsfenster
+  gui_outline 1			# Umrandung zeichnen
+  gui_nose 1			# Anzeige der Ausrichtung
+
+  drive "diff"		 	# Differenzialantrieb.
+  obstacle_return 1          	# Reaktion bei Hinderniskontakt
+  ranger_return 1.000           # Sichtbarkeit durch ranger-Sensoren
+  blob_return 1               	# Sichtbarkeit durch Blob_finder-Sensoren
+  fiducial_return 1           	# Wird als "1" durch Fiducial-Sensoren erkannt
+
+  localization "odom"         		# Positionsbestimmung mittels Kopplung (Odometrie)
+  odom_error [ 0.0 0.0 0.0 0.0 ]   	# Odometriefehler in x-, y- z- und theta-Richtung
+  localization_origin [0 0 0 0] 	# Start Lokalisierung bei (0, 0, 0).
+
+  velocity_bounds [-1.0 1.0 0 0 0 0 -60.0 60.0 ]        # kinematische Limits in m/s bzw. °/s
+  acceleration_bounds [-1.0 1.0 0 0 0 0 -60.0 60.0 ]    # dynamische Limits in m/s² bzw. °/s²
+
+  Rad( pose [ 0.000 0.250 -0.290 0.000 ] )	   	# Instanzierung linkes Rad
+  Rad( pose [ 0.000 -0.250 -0.290 0.000 ] )	# Instanzierung rechtes Rad
+  Stuetzrad( pose [ -0.200 0.000 -0.090 0.000 ] ) 	# Instanzierung Stützrad
+  Lasersensor( pose [ 0.000 0.000 0.000 0.000 ] ) 	# Instanzierung Lasersensor
+)
+
