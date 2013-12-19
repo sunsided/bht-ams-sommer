@@ -6,7 +6,10 @@
 #include "boost/date_time/posix_time/posix_time.hpp" // Für Zeitmessungen
 #include <fstream> // Für Datei-Zugriff
 #include <cmath>
+#include <iostream>
+#include <iomanip>
 
+using namespace std;
 using namespace AMS;
 using namespace PlayerCc;
 
@@ -38,17 +41,17 @@ int main(int argc, char **argv)
     ptime tref;            // Objekt der Klasse ptime zur Messung von dt
 
     // Roboter initialisieren
-	if( !(robot.read_config(argc, argv) && robot.connect()) ) {
-		robot.log.notice("Call with -h to see the available options.");
-		return -1;
-	}
+    if( !(robot.read_config(argc, argv) && robot.connect()) ) {
+      robot.log.notice("Call with -h to see the available options.");
+      return -1;
+    }
 
-	// Pfad zu Datei mit vorgegebener Trajektorie
-	file = "AMS_Trajekt.txt";
+    // Pfad zu Datei mit vorgegebener Trajektorie
+    file = "AMS_resources/AMS_Trajekt.txt";
 
     robot.init_pull_mode();  // Nach Wartezeit immer aktuelle Werte aus Proxies lesen
 
-	robot.draw_traject(file, 255, 0, 0);   // Trajektorie plotten
+	  robot.draw_traject(file, 255, 0, 0);   // Trajektorie plotten
     ifstream infile(file.c_str()); // Datei mit Trajektorie öffnen
     infile >> x_s >> y_s;      // Soll-Koordinaten des Startpunktes lesen
     infile >> x_s1 >> y_s1;        // Soll-Koordinaten des zweiten Punktes lesen
@@ -57,6 +60,8 @@ int main(int argc, char **argv)
     x = x_s;
     y = y_s;
 
+    cout << fixed << showpoint;
+    cout << setprecision(4);
 
     /********************* Fügen Sie ab hier eigenen Quellcode ein **********************/
     const double dx = x_s1 - x_s;
@@ -78,40 +83,47 @@ int main(int argc, char **argv)
         robot.wait_for_new_data(); // Neue Daten aus Proxies einlesen
 
         /********************* Fügen Sie ab hier eigenen Quellcode ein **********************/
+
         //  Aktuelle Bahn- und Winkelgeschwindigkeit auslesen und daraus das Weg- und Winkelimkrement ermitteln
-        v =
-        w =
-        delta =
-        phi =
+        v = robot.get_v();
+        w = robot.get_w();
+        delta = v * T;
+        phi   = w * T;
 
         // Berechnung der aktuellen Koordinaten mittels des nicht-holonomen Bewegungsmodells
-        x =
-        y =
-        theta =
+        x     += delta * cos(theta + 0.5 * phi);
+        y     += delta * sin(theta + 0.5 * phi);
+        theta += phi;
+
+        // Kosinus und Sinus vorberechnen
+        const double sint = sin(theta);
+        const double cost = cos(theta);
 
         // Aktuelle x- und y-Komponente der Bahngeschwindigkeit ermitteln
-        vx =
-        vy =
+        vx  = v * cost;
+        vy  = v * sint;
 
         // Soll-Geschwindigkeiten und -Beschleunigungen für aktuellen Schritt bestimmen
-        vx_s =
-        vy_s =
-        ax_s =
-        ay_s =
+        vx_s = (x_s - x_s1) * invT;
+        vy_s = (y_s - y_s1) * invT;
+        ax_s = (vx - vx_s1) * invT;
+        ay_s = (vy - vy_s1) * invT;
 
         // Aktuelle Fehler ermitteln
-        e_x = (x_s - x);
-        e_y = (y_s - y);
-        e_vx = (vx_s - vx);
-        e_vy = (vy_s - vy);
+        e_x  = x_s - x;
+        e_y  = y_s - y;
+        e_vx = vx_s - vx;
+        e_vy = vy_s - vy;
+
+        cout << "ex: " << e_x << " e_y: " << e_y << " e_vx: " << e_vx << " e_vy: " << e_vy << endl;
 
         // Bestimmung und Setzen der Sollgeschwindigkeiten (Stellgrößen)
-        ax =
-        ay =
-        a1 =
-        a2 =
-        v_s =
-        w_s =
+        ax = (vx_s - vx) * invT;
+        ay = (vy_s - vy) * invT;
+        a1 = ax *  cost + ay * sint;
+        a2 = ax * -sint + ay * cost;
+        v_s = v + a1 * T;
+        w_s = a2 / v_s;
 
         /******************** Ende des zusätzlich eingefügten Quellcodes ********************/
 
@@ -135,6 +147,8 @@ int main(int argc, char **argv)
     }
 
     robot.stop(); // stoppen
+
+    cout << "Feierabend." << endl;
 
     while(1); // Endlosschleife
     return 0;
