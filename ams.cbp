@@ -23,6 +23,13 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Linker>
+			<Add library="/usr/lib64/libboost_program_options-mt.so" />
+			<Add library="/usr/lib64/libboost_thread-mt.so" />
+			<Add library="/usr/lib64/libplayerc++.so" />
+			<Add library="/usr/lib64/libncurses.so" />
+			<Add library="/usr/lib64/libnewmat.so" />
+		</Linker>
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />
