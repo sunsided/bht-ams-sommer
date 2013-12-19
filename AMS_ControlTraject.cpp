@@ -5,6 +5,7 @@
 #include "AMS_Robot.hpp"
 #include "boost/date_time/posix_time/posix_time.hpp" // Für Zeitmessungen
 #include <fstream> // Für Datei-Zugriff
+#include <cmath>
 
 using namespace AMS;
 using namespace PlayerCc;
@@ -14,6 +15,7 @@ AMS_Robot robot;
 int main(int argc, char **argv)
 {
     const double T = 0.25; // feste Zeitdauer zwischen zwei Wegpunkten in Sekunden
+    const double invT = 1.0 / T;
     double v, w;           // aktuelle Bahn- und Winkelgeschwindigkeit
     double delta, phi;     // im aktuellen Schritt zurückgelegte Distanz und überstrichener Drehwinkel
     double vx, vy;         // aktuelle x- und y-Komponenten der Bahngeschwindigkeit in Schritt i
@@ -57,11 +59,15 @@ int main(int argc, char **argv)
 
 
     /********************* Fügen Sie ab hier eigenen Quellcode ein **********************/
+    const double dx = x_s1 - x_s;
+    const double dy = y_s1 - y_s;
+
     // Winkel vom 1. zum 2. Punkt der Trajektorie berechnen
-    theta =
+    theta = atan2(dy, dx);
+
     // Soll-Startgeschwindigkeiten ermitteln
-    vx_s1 =
-    vy_s1 =
+    vx_s1 = dx * invT;
+    vy_s1 = dy * invT;
 
     /******************** Ende des zusätzlich eingefügten Quellcodes ********************/
 
@@ -94,10 +100,10 @@ int main(int argc, char **argv)
         ay_s =
 
         // Aktuelle Fehler ermitteln
-        e_x =
-        e_y =
-        e_vx =
-        e_vy =
+        e_x = (x_s - x);
+        e_y = (y_s - y);
+        e_vx = (vx_s - vx);
+        e_vy = (vy_s - vy);
 
         // Bestimmung und Setzen der Sollgeschwindigkeiten (Stellgrößen)
         ax =

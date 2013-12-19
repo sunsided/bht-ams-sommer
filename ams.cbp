@@ -30,8 +30,11 @@
 			<Add library="/usr/lib64/libplayerc++.so" />
 			<Add library="/usr/lib64/libncurses.so" />
 			<Add library="/usr/lib64/libnewmat.so" />
+			<Add library="/usr/lib64/liblog4cpp.so" />
 		</Linker>
 		<Unit filename="AMS_ControlTraject.cpp" />
+		<Unit filename="AMS_Robot.cpp" />
+		<Unit filename="AMS_Robot.hpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
