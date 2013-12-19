@@ -1,10 +1,11 @@
 /// Beuth Hochschule für Technik Berlin
 /// Autonome Mobile Systeme
 /// Prof. Dr.-Ing. Volker Sommer
+/// Bearbeitet von: Markus
 
 #include "AMS_Robot.hpp"
-#include "boost/date_time/posix_time/posix_time.hpp" // Für Zeitmessungen
-#include <fstream> // Für Datei-Zugriff
+#include "boost/date_time/posix_time/posix_time.hpp"
+#include <fstream>
 #include <cmath>
 #include <iostream>
 #include <iomanip>
@@ -110,13 +111,12 @@ int main(int argc, char **argv)
         ay_s = (vy_s - vy_s1) * invT;
 
         // Aktuelle Fehler ermitteln
-        const double enable = 1;
-        e_x  = enable * (x_s - x);
-        e_y  = enable * (y_s - y);
-        e_vx = enable * (vx_s - vx);
-        e_vy = enable * (vy_s - vy);
+        e_x  = x_s - x;
+        e_y  = y_s - y;
+        e_vx = vx_s - vx;
+        e_vy = vy_s - vy;
 
-//        cout << "e_x: " << e_x << " e_y: " << e_y << " e_vx: " << e_vx << " e_vy: " << e_vy << endl;
+        cout << "e_x: " << e_x << " e_y: " << e_y << " e_vx: " << e_vx << " e_vy: " << e_vy << endl;
 
         // Bestimmung und Setzen der Sollgeschwindigkeiten (Stellgrößen)
         const double ax_s = (vx_s - vx_s1) * invT;
