@@ -187,7 +187,7 @@ int main(int argc, char **argv)
 
       cout  << endl << "Korrigiere Winkel:" << endl
           << "vorher:  " << global_phi << " (" << (global_phi*180/M_PI) << "°)"<< endl
-          << "nachher: " << << global_phi - 2 * M_PI << " (" << ((global_phi - 2 * M_PI)*180/M_PI) << "°)"<< endl;
+          << "nachher: " << (global_phi - 2 * M_PI) << " (" << ((global_phi - 2 * M_PI)*180/M_PI) << "°)"<< endl;
 
       global_phi -= 2 * M_PI;
     }
@@ -195,6 +195,18 @@ int main(int argc, char **argv)
     cout  << endl << "Globale Koordinaten der Wand:" << endl
           << "phi: " << global_phi << " (" << (global_phi*180/M_PI) << "°)"<< endl
           << "d:   " << global_d << endl;
+
+    // Linie zeichnen
+    cout << "Zeichne Gerade ..." << endl;
+    const double line_offs_x = global_d * cos(global_phi);
+    const double line_offs_y = global_d * sin(global_phi);
+
+    for (double t = -2; t <= 2; t += 0.01)
+    {
+      double line_x = line_offs_x + t*cos(global_phi+M_PI/2);
+      double line_y = line_offs_y + t*sin(global_phi+M_PI/2);
+      robot.draw_point(line_x, line_y, 255, 0, 0);
+    }
 
     /******************** Ende des zusätzlich eingefügten Quellcodes ********************/
 
