@@ -91,7 +91,9 @@ int main(int argc, char **argv)
       Den += r_i*r_i * cos(2 * theta_i) - Den1;
     }
 
-    Phi1 = 0.5*atan2(Den, Num);
+    //Phi1 = 0.5*atan2(Den, Num);
+    //Phi1 = 0.5*atan2(Num, Den);
+    Phi1 = 0.5*atan(Num/Den);
     Phi2 = Phi1 + 0.5*M_PI;
 
     cout  << endl << "Ermittelte Werte für Phi:" << endl
@@ -164,21 +166,34 @@ int main(int argc, char **argv)
     cout  << endl << "Roboterposition:" << endl
           << "x: " << x << endl
           << "y: " << y << endl
-          << "theta: " << theta << endl;
+          << "theta: " << theta << " (" << (theta*180/M_PI) << "°)"  << endl;
 
     const double beta = atan2(y, x);
     double global_phi = theta + Phi;
-    double global_d   = d + sqrt(x*x + y*y) * cos(beta - theta);
+    double global_d   = d + sqrt(x*x + y*y) * cos(beta - global_phi);
+
+   cout  << endl << "Globale Koordinaten der Wand vor der Korrektur:" << endl
+          << "phi: " << global_phi << " (" << (global_phi*180/M_PI) << "°)"<< endl
+          << "d:   " << global_d << endl;
 
     // Korrektur bei negativem Normalenabständen
-    if (d < 0)
+    if (global_d < 0)
     {
       global_phi += M_PI;
-      d = fabs(d);
+      global_d = fabs(global_d);
+    }
+
+    if (global_phi > M_PI) {
+
+      cout  << endl << "Korrigiere Winkel:" << endl
+          << "vorher:  " << global_phi << " (" << (global_phi*180/M_PI) << "°)"<< endl
+          << "nachher: " << << global_phi - 2 * M_PI << " (" << ((global_phi - 2 * M_PI)*180/M_PI) << "°)"<< endl;
+
+      global_phi -= 2 * M_PI;
     }
 
     cout  << endl << "Globale Koordinaten der Wand:" << endl
-          << "phi: " << global_phi << endl
+          << "phi: " << global_phi << " (" << (global_phi*180/M_PI) << "°)"<< endl
           << "d:   " << global_d << endl;
 
     /******************** Ende des zusätzlich eingefügten Quellcodes ********************/
