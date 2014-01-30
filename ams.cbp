@@ -23,6 +23,7 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 			<Add directory="/usr/include/player-3.1" />
+			<Add directory="/usr/include/newmat" />
 		</Compiler>
 		<Linker>
 			<Add library="/usr/lib64/libboost_program_options-mt.so" />
@@ -33,8 +34,12 @@
 			<Add library="/usr/lib64/liblog4cpp.so" />
 		</Linker>
 		<Unit filename="AMS_ControlTraject.cpp" />
+		<Unit filename="AMS_KalmanFilter.cpp" />
+		<Unit filename="AMS_KalmanFilter.hpp" />
 		<Unit filename="AMS_Robot.cpp" />
 		<Unit filename="AMS_Robot.hpp" />
+		<Unit filename="AMS_WallMap.cpp" />
+		<Unit filename="AMS_WallMap.hpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
