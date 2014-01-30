@@ -18,7 +18,9 @@ KalmanFilter::KalmanFilter(AMS_Robot* robotpointer)
     // Zeiger auf Roboterobjekt als Attribut speichern
     this->robotp = robotpointer;
     b = 0.27;     // Abstand der Räder vom kinematischen Zentrum des Roboters [m]
+                  // Größerer Radabstand führt zu geringerem Fehler
     ks = 0.001;   // Schlupfkonstante zur Berechnung der Varianz der Roboterbewegung in [m]
+    es = 1.0;     // Skalierung der Ellipse
     red = 0;
     green = 255;
     blue = 0;
@@ -27,7 +29,7 @@ KalmanFilter::KalmanFilter(AMS_Robot* robotpointer)
     D << 0.5   <<  0.5
       << 0.5/b << -0.5/b;
     // Simulierten Schlupffaktor des Roboters setzen
-    robotp->set_slip_const(0.001);
+    robotp->set_slip_const(ks);
     // Simulierten Messfehler des Entfernungssensors setzen (erst für Übungsaufgabe 8 relevant)
     robotp->set_sigma_ranger(0.04);
 }
@@ -57,8 +59,8 @@ void KalmanFilter::PlotEllipse(double xm, double ym)
 
     // Eigentwerte der Kovarianzen von x und y ermitteln
     eigenvalues(P1, L, T);
-    const double a = L(1);
-    const double b = L(2);
+    const double a = sqrt(L(1)); // Standardabweichung (nicht Varianz!) definiert Hauptachsenlänge
+    const double b = sqrt(L(2));
 
     cout << "Längen der Hauptachsen" << endl
          << "a = " << a << endl
@@ -72,8 +74,8 @@ void KalmanFilter::PlotEllipse(double xm, double ym)
     {
       // Ellipse in lokalen Koordinaten berechnen
       alpha = alpha_start + i*alpha_inc;
-      xys << a * cos(alpha)
-          << b * sin(alpha);
+      xys << (es * a * cos(alpha))
+          << (es * b * sin(alpha));
 
       // Transformation in globale Koordinaten
       xy << T*xys;
@@ -126,7 +128,7 @@ void KalmanFilter::PredictCov(double theta, double delta, double phi)
 
     // Varianzinkrement für delta und phi berechnen
     cout << "Berechnung von Q" << endl;
-    Q << D * Q_rl * D.t();
+    Q << (D * Q_rl * D.t());
 
     cout << setw(12) << setprecision(5) << Q << endl;
 
@@ -143,7 +145,7 @@ void KalmanFilter::PredictCov(double theta, double delta, double phi)
       << sin(theta + phi/2) <<  delta/2 * cos(theta + phi/2)
       << 0 << 1;
 
-  cout << setw(12) << setprecision(5) << B << endl;
+    cout << setw(12) << setprecision(5) << B << endl;
 
     // Prädiktion der Kovarianzmatrix
     cout << "Berechnung von P" << endl;

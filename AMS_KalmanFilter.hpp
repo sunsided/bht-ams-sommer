@@ -15,6 +15,7 @@ class KalmanFilter
 private:
     double b;                 	// Abstand der Räder vom kinematischen Zentrum des Roboters [m]
     double ks;                 	// Schlupfkonstante zur Berechnung der Varianz der Roboterbewegung in [m]
+    double es;                  // Skalierung der Ellipse
     Matrix D;                   // Matrix mit Kinematik des Differenzialantriebs
     Matrix P;                   // Kovarianzmatrix der Zustandsvariablen des Roboters
     AMS_Robot* robotp;          // Zeiger auf Roboterprojekt; wird dem Konstruktor übergeben
