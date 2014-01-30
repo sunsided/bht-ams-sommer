@@ -29,7 +29,7 @@ KalmanFilter::KalmanFilter(AMS_Robot* robotpointer)
     // Simulierten Schlupffaktor des Roboters setzen
     robotp->set_slip_const(0.001);
     // Simulierten Messfehler des Entfernungssensors setzen (erst für Übungsaufgabe 8 relevant)
-    robot.set_sigma_ranger(0.04);
+    robotp->set_sigma_ranger(0.04);
 }
 
 void KalmanFilter::PlotEllipse(double xm, double ym)
@@ -65,6 +65,8 @@ void KalmanFilter::PredictCov(double theta, double delta, double phi)
     /********************* Fügen Sie ab hier eigenen Quellcode ein **********************/
 
     // Eingangsgrößen in Vektor speichern
+    u  << delta
+       << phi;
 
     // Rückrechnung von delta und phi auf Wegstrecken der beiden Räder
 
