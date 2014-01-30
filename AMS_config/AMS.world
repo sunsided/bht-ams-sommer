@@ -131,7 +131,7 @@ define Stuetzrad position # Festlegung der Stützradkontur
 Roboter  # Instanzierung des Roboters
 (
   name "r0"			# Name des Robotermodells
-  pose [ -1.000 -3.000 0.000 -112.500 ]    		# Roboterstartposition in der Karte (x/m y/m z/m phi/°)
+  pose [ -2.000  1.000 0.000 0 ]    		# Roboterstartposition in der Karte (x/m y/m z/m phi/°)
 
   origin [0.000 0.000 0.000 0.000] 	# Drehpunkt vom Mittelpunkt aus
   gui_move 1			# Verschiebbarkeit durch Maus im Simulationsfenster

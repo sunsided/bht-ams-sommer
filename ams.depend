@@ -1,6 +1,7 @@
 # depslib dependency file v1.0
-1391073570 source:/home/campus/s52959/ams-Sommer/AMS_ControlTraject.cpp
+1391079402 source:/home/campus/s52959/ams-Sommer/AMS_ControlTraject.cpp
 	"AMS_Robot.hpp"
+	"AMS_KalmanFilter.hpp"
 	"boost/date_time/posix_time/posix_time.hpp"
 	<fstream>
 	<cmath>
@@ -132,5 +133,25 @@
 	<iostream>
 	<cmath>
 	"AMS_Robot.hpp"
+	"newmat/newmatio.h"
+
+1386260709 source:/home/campus/s52959/ams-Sommer/AMS_WallMap.cpp
+	"AMS_Robot.hpp"
+	"AMS_WallMap.hpp"
+
+1386260724 /home/campus/s52959/ams-Sommer/AMS_WallMap.hpp
+	<iostream>
+	<fstream>
+	<vector>
+
+1391079302 source:/home/campus/s52959/ams-Sommer/AMS_KalmanFilter.cpp
+	"AMS_KalmanFilter.hpp"
+	<iostream>
+	"newmat/newmatio.h"
+
+1386260567 /home/campus/s52959/ams-Sommer/AMS_KalmanFilter.hpp
+	"AMS_Robot.hpp"
+	"AMS_WallMap.hpp"
+	<iostream>
 	"newmat/newmatio.h"
 

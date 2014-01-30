@@ -41,16 +41,56 @@ void KalmanFilter::PlotEllipse(double xm, double ym)
     DiagonalMatrix L(2);       // Diagonalmatrix mit den Eigenwerten von P
     ColumnVector xys(2);       // Vektor mit jeweils aktuellem Ellipsenpunkt (xs,ys) in Hauptachsenform (lokale Koordinaten)
     ColumnVector xy(2);        // Vektor mit jeweils aktuellem Ellipsenpunkt (x,y) in globalen Koordinaten
-	player_point_2d_t* ellipse = new player_point_2d_t[pt_count+1]; // Objekt zum Speichern der Ellipsenpunkte
+	  player_point_2d_t* ellipse = new player_point_2d_t[pt_count+1]; // Objekt zum Speichern der Ellipsenpunkte
 
     /********************* Fügen Sie ab hier eigenen Quellcode ein **********************/
 
+    cout << "== ELLIPSE ==================================" << endl;
+
+    // Kovarianzen für x und y extrahieren
+    cout << "Extrahiere Kovarianzen" << endl;
+    P1(1,1) = P(1,1);
+    P1(1,2) = P(1,2);
+    P1(2,2) = P(2,2);
+
+    cout << P1 << endl;
+
+    // Eigentwerte der Kovarianzen von x und y ermitteln
+    eigenvalues(P1, L, T);
+    const double a = L(1);
+    const double b = L(2);
+
+    cout << "Längen der Hauptachsen" << endl
+         << "a = " << a << endl
+         << "b = " << b << endl;
+
     // Schleife zur Berechnung der Ellipse in Parameterform und zum Speichern im Array "ellipse"
+    const double alpha_start = 0;
+    const double alpha_end = 2*M_PI;
+    const double alpha_inc = (alpha_end-alpha_start) / pt_count;
+    for (int i = 0; i < pt_count; ++i)
+    {
+      // Ellipse in lokalen Koordinaten berechnen
+      alpha = alpha_start + i*alpha_inc;
+      xys << a * cos(alpha)
+          << b * sin(alpha);
+
+      // Transformation in globale Koordinaten
+      xy << T*xys;
+      xy(1) += xm;
+      xy(2) += ym;
+
+      // Koordinaten in Ellipse übertragen
+      player_point_2d_t point = { xy(1), xy(2) };
+      ellipse[i] = point;
+    }
+
+    ellipse[pt_count] = ellipse[0];
 
     /******************** Ende des zusätzlich eingefügten Quellcodes ********************/
 
     robotp->graphmap->Color(red,green,blue,0);  // Farben im Roboterobjekt setzen
-	robotp->graphmap->DrawPolyline(ellipse, pt_count+1); // Ellipse zeichnen
+	  robotp->graphmap->DrawPolyline(ellipse, pt_count+1); // Ellipse zeichnen
 }
 
 void KalmanFilter::PredictCov(double theta, double delta, double phi)
@@ -64,19 +104,50 @@ void KalmanFilter::PredictCov(double theta, double delta, double phi)
 
     /********************* Fügen Sie ab hier eigenen Quellcode ein **********************/
 
+    cout << "== PRÄDIKTION ===============================" << endl;
+
     // Eingangsgrößen in Vektor speichern
     u  << delta
        << phi;
 
     // Rückrechnung von delta und phi auf Wegstrecken der beiden Räder
+    cout << "Invertierung von D" << endl;
+    InvertedMatrix invertedD = D.i();
+    u_rl << invertedD * u;
+
+    cout << setw(12) << setprecision(5) << invertedD << endl;
 
     // Varianzinkrement der Räder proportional zu Radwegen und abhängig von ks vorgeben
+    cout << "Berechnung von Q_rl" << endl;
+    Q_rl(1,1) = u_rl(1) * ks;
+    Q_rl(2,2) = u_rl(2) * ks;
+
+    cout << setw(12) << setprecision(5) << Q_rl << endl;
 
     // Varianzinkrement für delta und phi berechnen
+    cout << "Berechnung von Q" << endl;
+    Q << D * Q_rl * D.t();
+
+    cout << setw(12) << setprecision(5) << Q << endl;
 
     // System- und Eingangsmatrix für aktuellen Schritt bestimmen
+    cout << "Berechnung von A" << endl;
+    A << 1 << 0 << -delta * sin(theta + phi/2)
+      << 0 << 1 <<  delta * cos(theta + phi/2)
+      << 0 << 0 << 1;
+
+    cout << setw(12) << setprecision(5) << A << endl;
+
+    cout << "Berechnung von B" << endl;
+    B << cos(theta + phi/2) << -delta/2 * sin(theta + phi/2)
+      << sin(theta + phi/2) <<  delta/2 * cos(theta + phi/2)
+      << 0 << 1;
+
+  cout << setw(12) << setprecision(5) << B << endl;
 
     // Prädiktion der Kovarianzmatrix
+    cout << "Berechnung von P" << endl;
+    P << A*P*A.t() + B*Q*B.t();
 
     /******************** Ende des zusätzlich eingefügten Quellcodes ********************/
 

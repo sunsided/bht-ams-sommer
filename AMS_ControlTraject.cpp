@@ -3,6 +3,7 @@
 /// Prof. Dr.-Ing. Volker Sommer
 
 #include "AMS_Robot.hpp"
+#include "AMS_KalmanFilter.hpp"
 #include "boost/date_time/posix_time/posix_time.hpp" // Für Zeitmessungen
 #include <fstream> // Für Datei-Zugriff
 #include <cmath>
@@ -39,12 +40,17 @@ int main(int argc, char **argv)
     string file;           // Datei mit Punkten der zu befahrenden Trajektorie
     double dt;             // Zeitdauer für das Durchlaufen der aktuellen Schleife
     ptime tref;            // Objekt der Klasse ptime zur Messung von dt
+    KalmanFilter *kalman;  // Instanz des Kalman-Filters
+    int loop_number = 0;   // Nummer des Schleifendurchlaufs
 
     // Roboter initialisieren
     if( !(robot.read_config(argc, argv) && robot.connect()) ) {
       robot.log.notice("Call with -h to see the available options.");
       return -1;
     }
+
+    // Kalman-Filter initialisieren
+    kalman = new KalmanFilter(&robot);
 
     // Pfad zu Datei mit vorgegebener Trajektorie
     file = "AMS_resources/AMS_Trajekt.txt";
@@ -94,6 +100,16 @@ int main(int argc, char **argv)
         x     += delta * cos(theta + 0.5 * phi);
         y     += delta * sin(theta + 0.5 * phi);
         theta += phi;
+
+        // Prädiktion der Kovarianz
+        kalman->PredictCov(theta, delta, phi);
+
+        // Ellipse zeichnen
+        if (loop_number++ % 5 == 0)
+        {
+          cout << "Zeichne Ellipse ..." << endl;
+          kalman->PlotEllipse(x, y);
+        }
 
         // Kosinus und Sinus vorberechnen
         const double sint = sin(theta);
